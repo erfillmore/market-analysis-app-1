@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Market Analysis</title>
+        <style>img {width: 100px;}</style>
+    </head>
+    <body>
+        <main>
+            <section><img src="" /></section>
+            <section><img src="" /></section>
+            <section><img src="" /></section>
+        </main>
+    </body>
+    <script>
+        function log(m){
+            console.log(m);
+        }
+
+        var imgArr = ['bag.jpg', 'banana.jpg', 'boots.jpg', 'chair.jpg', 'cthulhu.jpg', 'dragon.jpg', 'pen.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.jpg', 'unicorn.jpg', 'usb.jpg', 'water_can.jpg', 'wine_glass.jpg'];
+
+        var imgObjArr = [];
+
+        var ImgObj = function(name){
+            this.name = name;
+            this.votes = 0;
+        };
+
+        for(let fileName of imgArr){
+            var newObj = new ImgObj(fileName);
+            imgObjArr.push(newObj);
+        }
+
+        function random(n, mode){
+            var arr = [];
+            var nums = [];
+            // for(var i=0; i<n; i++){
+            while(arr.length < n){
+                var numR = Math.floor(Math.random() * 14);
+                if(nums.indexOf(numR) === -1){
+                    nums.push(numR);
+                    if(mode){
+                        arr.push(imgObjArr[numR]);
+                    } else {
+                        arr.push(numR);
+                    }
+                    log(numR);
+                }
+            }
+            return arr;
+        }
+
+        function getShowImgs(){
+            var imgObjs = random(3, true);
+            var els = document.getElementsByTagName('img');
+            for(var i=0; i<els.length; i++){
+                els[i].src = 'img/' + imgObjs[i].name;
+            }
+        }
+
+        getShowImgs();
+    </script>
+</html>
