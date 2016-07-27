@@ -6,9 +6,9 @@
     </head>
     <body>
         <main>
-            <section><img src="" /></section>
-            <section><img src="" /></section>
-            <section><img src="" /></section>
+            <section><img src='' data-pos='pos_L' /></section>
+            <section><img src='' data-pos='pos_C' /></section>
+            <section><img src='' data-pos='pos_R' /></section>
             <section>
                 <p>Aliqua ut pariatur cillum enim consectetur occaecat sit adipisicing veniam dolor sint. Amet sit do ullamco nisi velit laborum aliqua ad. Laborum et deserunt laborum duis sint cillum nulla aute occaecat incididunt aliqua fugiat elit cillum fugiat.</p>
             </section>
@@ -16,123 +16,5 @@
             <section id='voteTotals' hidden></section>
         </main>
     </body>
-    <script>
-        var doc = document;
-        var reportFrequency = 3;
-        var voteCounter = 0;
-        var imgArr = ['bag.jpg', 'banana.jpg', 'boots.jpg', 'chair.jpg', 'cthulhu.jpg', 'dragon.jpg', 'pen.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.jpg', 'unicorn.jpg', 'usb.jpg', 'water_can.jpg', 'wine_glass.jpg'];
-
-        var imgObjArr = [];
-
-        var ImgObj = function(name, num){
-            this.name = name;
-            this.displayName = name.replace('.jpg', '');
-            this.num = num;
-            this.votes = 0;
-        };
-
-        for(var i=0; i<imgArr.length; i++){
-            var newObj = new ImgObj(imgArr[i], i);
-            imgObjArr.push(newObj);
-        }
-
-        function log(m){
-            console.log(m);
-        }
-        function get(id){
-            return doc.getElementById(id);
-        }
-        function put(id, content){
-            doc.getElementById(id).innerHTML = content;
-        }
-        function clr(id){
-            doc.getElementById(id).innerHTML = '';
-        }
-
-        function vis(id, state){
-            var el = get(id);
-            if(state === 1){
-                el.hidden = false;
-            } else {
-                el.hidden = true;
-            }
-        }
-
-
-        function random(n, mode){
-            var arr = [];
-            var nums = [];
-            while(arr.length < n){
-                var numR = Math.floor(Math.random() * 14);
-                if(nums.indexOf(numR) === -1){
-                    nums.push(numR);
-                    if(mode){
-                        arr.push(imgObjArr[numR]);
-                    } else {
-                        arr.push(numR);
-                    }
-                    // log(numR);
-                }
-            }
-            return arr;
-        }
-
-        function getShowImgs(){
-            var imgObjs = random(3, true);
-            var els = doc.getElementsByTagName('img');
-            for(var i=0; i<els.length; i++){
-                els[i].src = 'img/' + imgObjs[i].name;
-                els[i].dataset.num = imgObjs[i].num;
-            }
-        }
-
-        function increment(){
-            voteCounter ++;
-            vis('voteTotals', 0);
-            if(voteCounter % reportFrequency){
-                vis('btn_showTotals', 0);
-            } else {
-                vis('btn_showTotals', 1);
-            }
-        }
-
-        doc.addEventListener('click', function(e){
-            if(e.target.tagName === 'IMG'){
-                var votedObj = imgObjArr[e.target.dataset.num];
-                votedObj.votes++;
-                log("Votes for " + votedObj.name + ": " + votedObj.votes);
-                increment();
-                log("Total votes so far: " + voteCounter);
-                getShowImgs();
-            }
-        });
-
-        get('btn_showTotals').addEventListener('click', function(){
-            vis('voteTotals', 1);
-            vis('btn_showTotals', 0);
-            if(!(voteCounter % reportFrequency)){
-                genReport();
-            }
-        });
-
-        function genReport(){
-            var arrSorted = imgObjArr.slice();
-            arrSorted = (arrSorted.sort(function(a, b){
-                return a.votes - b.votes;
-            })).reverse();
-
-            var str = "<table>";
-            clr('voteTotals');
-
-            for(var i=0; i<arrSorted.length; i++){
-                var imgObj = arrSorted[i];
-                str += "<tr><td>" + imgObj.displayName + "</td>" + "<td>" + imgObj.votes + "</td></tr>";
-            }
-            str += "</table>";
-            put('voteTotals', str);
-        }
-
-        getShowImgs();
-
-    </script>
+    <script src='js/app.js' type='text/javascript'></script>
 </html>
