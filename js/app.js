@@ -1,46 +1,4 @@
-// XXX show 3 imgs at a time
-// XXX rank imgs
-// XXX store, calc, display resulting data
-
-// randomly show 3 imgs at app start, side-by-side
-// instructional text to click on product most likely to buy
-// XXX use eventlistener to track clicks for each img
-// XXX log to console the selected product, and its total votes so far
-// XXX display next 3 imgs
-// XXX show 'See Totals' button after every 15 user votes that shows listing of all objects and their votes
-// XXX --- sort the list by vote number
-// XXX ------ calc % of votes per appearance for each, show in separate list
-// XXX --------- another analysis metric based on num of clicks: BIAS (L C R)
-// XXX --------- present all data points in table instead of list
-
-// Choose a custom web font (Links to an external site)
-// Choose a custom color palette (Links to an external site)
-
 var doc = document;
-var reportFrequency = 3;
-var voteCounter = 0;
-var imgArr = ['bag.jpg', 'banana.jpg', 'boots.jpg', 'chair.jpg', 'cthulhu.jpg', 'dragon.jpg', 'pen.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.jpg', 'unicorn.jpg', 'usb.jpg', 'water_can.jpg', 'wine_glass.jpg'];
-
-var imgObjArr = [];
-
-var ImgObj = function(name, num){
-    this.name = name;
-    this.displayName = (name.replace('.jpg', '')).replace('_', ' ');
-    this.num = num;
-    this.votes = 0;
-    this.appearing = 0;
-    this.calcPercent = function(){
-        var percent = this.votes/this.appearing;
-        if(!percent){ percent = 0;}
-        return percent.toFixed(2);
-    };
-};
-
-for(var i=0; i<imgArr.length; i++){
-    // load objects to array
-    var newObj = new ImgObj(imgArr[i], i);
-    imgObjArr.push(newObj);
-}
 
 //--- Helper functions --- //
 function log(m){
@@ -64,102 +22,177 @@ function vis(id, state){
         el.hidden = true;
     }
 }
-//--- Helper functions --- //
+// ----------------------- //
 
-// --- Event listeners --- //
-doc.addEventListener('click', function(e){
-    if(e.target.tagName === 'IMG'){
-        var votedObj = imgObjArr[e.target.dataset.num];
-        votedObj.votes++;
-        log("Votes for " + votedObj.name + ": " + votedObj.votes);
-        increment();
-        log("Vote Total: " + voteCounter);
-        posBias[e.target.dataset.pos]++;
-        getShowImgs();
-    }
-});
-
-get('btn_showTotals').addEventListener('click', function(){
-    vis('voteTotals', 1);
-    vis('btn_showTotals', 0);
-    if((voteCounter % reportFrequency) === 0){
-        genReport();
-    }
-});
-// --- Event listeners --- //
-
-function random(n, mode){
-    var arr = [];
-    var nums = [];
-    while(arr.length < n){
-        var numR = Math.floor(Math.random() * 14);
-        if(nums.indexOf(numR) === -1){
-            nums.push(numR);
-            if(mode){
-                // To return random image objects
-                arr.push(imgObjArr[numR]);
-            } else {
-                // To return just random nums
-                arr.push(numR);
-            }
-            // log(numR);
+var rankObj = {
+    // Master obj
+    reportFrequency: 15,
+    freqCounter: 0,
+    voteCounter: 0,
+    imgObjArr: [],
+    record: [],
+    imgArr: ['bag.jpg', 'banana.jpg', 'boots.jpg', 'chair.jpg', 'cthulhu.jpg', 'dragon.jpg', 'pen.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.jpg', 'unicorn.jpg', 'usb.jpg', 'water_can.jpg', 'wine_glass.jpg'],
+    helperTxt: [
+        'A rolling suitcase that looks like R2D2.',
+        'A tool that slices bananas in one push.',
+        'Open-toed rain boots.',
+        'A chair with a convex seat.',
+        'A toy of the Eldritch lord Cthulhu. Bow down before his evil toy likeness!',
+        'A delicious can of dragon meat. No Pete\'s were harmed in the making of this product.',
+        'Pen caps with plastic utensils attached.',
+        'Pizza scissors.',
+        'A shark sleeping bag.',
+        'Baby onesie with sweeper attached. Put that baby to work!',
+        'Canned unicorn.',
+        'A tentacle usb drive.',
+        'Perpetual watering machine.',
+        'Wineglass build for sniffing or gulping or something.'
+    ],
+    init: function(){
+        for(var i=0; i<rankObj.imgArr.length; i++){
+            // load new objs to array
+            var newObj = new ImgObj(rankObj.imgArr[i], i, rankObj.helperTxt[i]);
+            rankObj.imgObjArr.push(newObj);
         }
-    }
-    return arr;
-}
+        doc.addEventListener('click', function(e){
+            if(e.target.tagName === 'IMG'){
+                var votedObj = rankObj.imgObjArr[e.target.dataset.num];
+                votedObj.votes++;
+                log("Votes for " + votedObj.name + ": " + votedObj.votes);
+                rankObj.increment();
+                log("Vote Total: " + rankObj.voteCounter);
+                rankObj.posBias[e.target.dataset.pos]++;
+                rankObj.getShowImgs();
+            }
+        });
+        get('btn_showTotals').addEventListener('click', function(){
+            vis('voteTotals', 1);
+            vis('btn_showTotals', 0);
+            if((rankObj.voteCounter % rankObj.reportFrequency) === 0){
+                rankObj.genReport();
+            }
+        });
+        this.progBar('init');
+        this.getShowImgs();
+    },
+    randomImgs: function(n){
+        var arr = [];
+        var nums = [];
+        while(arr.length < n){
+            var numR = Math.floor(Math.random() * 14);
+            if(nums.indexOf(numR) === -1){//prevent duplicates
+                if(this.record.indexOf(numR) === -1){//prevent repeats
+                    nums.push(numR);
+                    arr.push(this.imgObjArr[numR]);
+                    this.record.push(numR);
+                    log('History: ' + rankObj.record);
+                } else if(this.record.length >= this.imgArr.length){
+                    nums.push(numR);
+                    arr.push(this.imgObjArr[numR]);
+                    this.record.push(numR);
+                }
+            }
+        }
+        return arr;
+    },
+    getShowImgs: function(){
+        var imgObjs = this.randomImgs(3, true);
+        var els = doc.getElementsByTagName('img');
+        for(var i=0; i<els.length; i++){
+            imgEl = els[i];
+            imgEl.src = 'img/med/' + imgObjs[i].name;
+            var num = imgObjs[i].num;
+            imgEl.dataset.num = num;
+            imgEl.alt = imgObjs[i].altTxt;
+            this.imgObjArr[num].appearing++;
+        }
+    },
+    increment: function(){
+        if(this.freqCounter === 0) {
+            this.progBar('reset');
+        }
+        this.voteCounter ++;
+        this.freqCounter++;
 
-function getShowImgs(){
-    var imgObjs = random(3, true);
-    var els = doc.getElementsByTagName('img');
-    for(var i=0; i<els.length; i++){
-        els[i].src = 'img/' + imgObjs[i].name;
-        var num = imgObjs[i].num;
-        els[i].dataset.num = num;
-        imgObjArr[num].appearing++;
-    }
-}
+        vis('voteTotals', 0);
+        if(this.voteCounter % this.reportFrequency){
+            vis('btn_showTotals', 0);
+            this.progBar('update', this.freqCounter);
+        } else {
+            vis('btn_showTotals', 1);
+            this.progBar('update', this.freqCounter);
+            this.freqCounter = 0;
+        }
+    },
+    progBar: function(mode, n){
+        var els_bar = doc.getElementsByClassName('prog_section');
+        if(mode === 'init'){
+            var str = '';
 
-function increment(){
-    voteCounter ++;
-    vis('voteTotals', 0);
-    if(voteCounter % reportFrequency){
-        vis('btn_showTotals', 0);
-    } else {
-        vis('btn_showTotals', 1);
-    }
-}
+            for(var i=0; i<this.reportFrequency; i++){
+                var section_size = 100/this.reportFrequency;
+                str += "<div class='prog_section' style='width:" + section_size + "%;'></div>";
+            }
+            put('progress', str);
+        } else if(mode === 'update'){
+            for(var j=0; j<n; j++){
+                if(els_bar[j].className.indexOf('complete') === -1 ){
+                    els_bar[j].className += ' complete';
+                }
+            }
+        } else {//reset
+            for(var k=0; k<this.reportFrequency; k++){
+                els_bar[k].className = 'prog_section';
+            }
+        }
+    },
+    genReport: function(){
+        var arrSorted = this.imgObjArr.slice();
+        clr('voteTotals');
 
-function genReport(){
-    var arrSorted = imgObjArr.slice();
-    clr('voteTotals');
+        arrSorted = (arrSorted.sort(function(a, b){
+            return a.votes - b.votes;
+        })).reverse();
 
-    arrSorted = (arrSorted.sort(function(a, b){
-        return a.votes - b.votes;
-    })).reverse();
+        var str = "<h2>Click Report</h2><table><tr><thead><td>Subject</td><td>Votes</td><td>Percent</td></thead></tr><tbody>";
+        for(var i=0; i<arrSorted.length; i++){
+            var imgObj = arrSorted[i];
+            str += "<tr><td>" + imgObj.displayName + "</td>" + "<td>" + imgObj.votes + "</td><td>" + imgObj.calcPercent() + "</td></tr>";
+        }
+        str += "</tbody></table>";
+        str += "<h2>Click Bias</h2>" + this.posBias.report();
+        str += "<h4>Click any image to continue!</h4>";
 
-    var str = "<table><tr><thead><td>Subject</td><td>Votes</td><td>Percent</td></thead></tr><tbody>";
-    for(var i=0; i<arrSorted.length; i++){
-        var imgObj = arrSorted[i];
-        str += "<tr><td>" + imgObj.displayName + "</td>" + "<td>" + imgObj.votes + "</td><td>" + imgObj.calcPercent() + "</td></tr>";
-    }
-    str += "</tbody></table>";
-
-    put('voteTotals', str);
-    posBias.report();
-}
-
-var posBias = {
-    // Track positional bias
-    pos_L: 0,
-    pos_C: 0,
-    pos_R: 0,
-    report: function(){
-        log("--- Positional Bias ---");
-        log("Left clicks: " + this.pos_L);
-        log("Center clicks: " + this.pos_C);
-        log("Right clicks: " + this.pos_R);
-        log("-----------------------");
+        put('voteTotals', str);
+        this.posBias.report();
+    },
+    posBias: {
+        // For tracking positional bias
+        pos_L: 0,
+        pos_C: 0,
+        pos_R: 0,
+        report: function(){
+            var str = "<table id='table_Bias'><thead><th>Left</th><th>Center</th><th>Right</th></thead>";
+            str += "<td>" + this.pos_L + "</td><td>" + this.pos_C + "</td><td>" + this.pos_R + "</td>";
+            str += "<tbody></tbody></table>";
+            return str;
+        }
     }
 };
 
-getShowImgs();
+var ImgObj = function(name, num, altTxt){
+    // Constructor obj
+    this.name = name;
+    this.displayName = (name.replace('.jpg', '')).replace('_', ' ');
+    this.num = num;
+    this.votes = 0;
+    this.appearing = 0;
+    this.altTxt = altTxt;
+    this.calcPercent = function(){
+        var percent = this.votes/this.appearing;
+        if(!percent){ percent = 0;}
+        return percent.toFixed(2);
+    };
+};
+
+rankObj.init();

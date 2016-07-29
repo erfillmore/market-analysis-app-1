@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+        <link type='text/css' rel='stylesheet' href='css/style.css' />
         <title>Market Analysis</title>
-        <style>img {width: 100px;}</style>
     </head>
     <body>
         <main>
-            <section><img src='' data-pos='pos_L' /></section>
-            <section><img src='' data-pos='pos_C' /></section>
-            <section><img src='' data-pos='pos_R' /></section>
-            <section>
-                <p>Aliqua ut pariatur cillum enim consectetur occaecat sit adipisicing veniam dolor sint. Amet sit do ullamco nisi velit laborum aliqua ad. Laborum et deserunt laborum duis sint cillum nulla aute occaecat incididunt aliqua fugiat elit cillum fugiat.</p>
+            <div id='progress'></div>
+            <section id='container_imgs'>
+                <article class='productShot'><img src='' data-pos='pos_L' /></article>
+                <article class='productShot'><img src='' data-pos='pos_C' /></article>
+                <article class='productShot'><img src='' data-pos='pos_R' /></article>
             </section>
-            <input id='btn_showTotals' type='button' value='Show Totals' hidden />
+            <section>
+                <p id='txt_instruction'>Please click the image of the product that you are most likely to buy.</p>
+            </section>
+            <div id='container_btn'>
+                <input id='btn_showTotals' type='button' value='See Totals' hidden />
+            </div>
             <section id='voteTotals' hidden></section>
         </main>
     </body>
