@@ -172,7 +172,16 @@ var rankObj = {
         pos_C: 0,
         pos_R: 0,
         report: function(){
-            var str = "<table id='table_Bias'><thead><th>Left</th><th>Center</th><th>Right</th></thead>";
+            if(window.innerWidth > 600){
+                desc_L = "Left";
+                desc_C = "Center";
+                desc_R = "Right";
+            } else {
+                desc_L = "Top";
+                desc_C = "Middle";
+                desc_R = "Bottom";
+            }
+            var str = "<table id='table_Bias'><thead><th>" + desc_L + "</th><th>" + desc_C + "</th><th>" + desc_R + "</th></thead>";
             str += "<td>" + this.pos_L + "</td><td>" + this.pos_C + "</td><td>" + this.pos_R + "</td>";
             str += "<tbody></tbody></table>";
             return str;

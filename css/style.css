@@ -7,7 +7,7 @@ h2, h4 {
 }
 
 #container_imgs {
-    height: 350px;
+    min-height: 350px;
     width: 90%;
     display: flex;
     margin: auto;
@@ -22,7 +22,6 @@ h2, h4 {
 .productShot {
     display: inline-flex;
     margin: auto;
-    width: 33%;
 }
 
 #voteTotals {
@@ -71,7 +70,7 @@ td {
     text-align: center;
 }
 
-@media(max-width:1000px){
+/*@media(max-width:1000px){
     .productShot {
         display: block;
         text-align: center;
@@ -98,4 +97,4 @@ td {
     #voteTotals {
         padding: 0px;
     }
-}
+}*/

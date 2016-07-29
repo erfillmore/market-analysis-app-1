@@ -1,0 +1,28 @@
+@media(max-width:1000px){
+    .productShot {
+        display: block;
+        text-align: center;
+    }
+
+    img {
+        width: 90%;
+    }
+
+    #voteTotals {
+        padding: 0px;
+    }
+}
+
+@media(max-width:600px){
+    #container_imgs {
+        flex-direction: column;
+    }
+
+    img {
+        width: 85%;
+    }
+
+    #voteTotals {
+        padding: 0px;
+    }
+}
