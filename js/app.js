@@ -26,7 +26,7 @@ function vis(id, state){
 
 var rankObj = {
     // Master obj
-    reportFrequency: 15,
+    reportFrequency: 4,
     freqCounter: 0,
     voteCounter: 0,
     imgObjArr: [],
@@ -147,24 +147,40 @@ var rankObj = {
         }
     },
     genReport: function(){
-        var arrSorted = this.imgObjArr.slice();
-        clr('voteTotals');
-
-        arrSorted = (arrSorted.sort(function(a, b){
-            return a.votes - b.votes;
-        })).reverse();
-
-        var str = "<h2>Click Report</h2><table><tr><thead><td>Subject</td><td>Votes</td><td>Percent</td></thead></tr><tbody>";
-        for(var i=0; i<arrSorted.length; i++){
-            var imgObj = arrSorted[i];
-            str += "<tr><td>" + imgObj.displayName + "</td>" + "<td>" + imgObj.votes + "</td><td>" + imgObj.calcPercent() + "</td></tr>";
-        }
-        str += "</tbody></table>";
-        str += "<h2>Click Bias</h2>" + this.posBias.report();
-        str += "<h4>Click any image to continue!</h4>";
-
-        put('voteTotals', str);
-        this.posBias.report();
+      convert(this.imgObjArr);
+      var chartProperties = {
+    		title:{
+    			text: "Popularity of Objects"
+    		},
+    		data: [
+    		{
+    			// Change type to "doughnut", "line", "splineArea", etc.
+    			type: "column",
+    			dataPoints: newArr,
+          height: 300
+    		}
+    		]
+    	};
+      chart = new CanvasJS.Chart("voteTotals", chartProperties);
+      chart.render();
+        // var arrSorted = this.imgObjArr.slice();
+        // clr('voteTotals');
+        //
+        // arrSorted = (arrSorted.sort(function(a, b){
+        //     return a.votes - b.votes;
+        // })).reverse();
+        //
+        // var str = "<h2>Click Report</h2><table><tr><thead><td>Subject</td><td>Votes</td><td>Percent</td></thead></tr><tbody>";
+        // for(var i=0; i<arrSorted.length; i++){
+        //     var imgObj = arrSorted[i];
+        //     str += "<tr><td>" + imgObj.displayName + "</td>" + "<td>" + imgObj.votes + "</td><td>" + imgObj.calcPercent() + "</td></tr>";
+        // }
+        // str += "</tbody></table>";
+        // str += "<h2>Click Bias</h2>" + this.posBias.report();
+        // str += "<h4>Click any image to continue!</h4>";
+        //
+        // put('voteTotals', str);
+        // this.posBias.report();
     },
     posBias: {
         // For tracking positional bias
@@ -205,3 +221,19 @@ var ImgObj = function(name, num, altTxt){
 };
 
 rankObj.init();
+
+var newArr = [];
+
+function convert(array) {
+  for (var i = 0; i < array.length; i++) {
+    var newObj = {
+      label: array[i].displayName,
+      y: array[i].votes,
+    }
+    newArr.push(newObj);
+  }
+}
+
+
+
+//report freq changed 2 4
