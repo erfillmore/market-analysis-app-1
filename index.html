@@ -19,6 +19,11 @@
             </section>
             <div id='container_btn'>
                 <input id='btn_showTotals' type='button' value='See Totals' hidden />
+                <select onchange="rankObj.genReport(this.options[this.selectedIndex].value)";>
+                  <option value="column">Column</option>
+                  <option value="bar">Bar</option>
+                  <option value="pie">Pie</option>
+                </select>
             </div>
             <section id='voteTotals' hidden></section>
         </main>

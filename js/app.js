@@ -26,7 +26,8 @@ function vis(id, state){
 
 var rankObj = {
     // Master obj
-    reportFrequency: 4,
+    chartType: "column",
+    reportFrequency: 15,
     freqCounter: 0,
     voteCounter: 0,
     imgObjArr: [],
@@ -146,7 +147,13 @@ var rankObj = {
             }
         }
     },
-    genReport: function(){
+
+    genReport: function(qwerty){
+      if (!qwerty) {
+        qwerty = "column";
+      }
+      vis("voteTotals",1);
+      console.log(qwerty);
       convert(this.imgObjArr);
       var chartProperties = {
     		title:{
@@ -155,7 +162,7 @@ var rankObj = {
     		data: [
     		{
     			// Change type to "doughnut", "line", "splineArea", etc.
-    			type: "column",
+    			type: qwerty,
     			dataPoints: newArr,
           height: 300
     		}
@@ -225,15 +232,13 @@ rankObj.init();
 var newArr = [];
 
 function convert(array) {
+  newArr = [];
   for (var i = 0; i < array.length; i++) {
     var newObj = {
       label: array[i].displayName,
       y: array[i].votes,
     }
+
     newArr.push(newObj);
   }
 }
-
-
-
-//report freq changed 2 4
