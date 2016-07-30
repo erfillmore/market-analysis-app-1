@@ -1,7 +1,6 @@
-@media(max-width:1000px){
+@media(max-width:1200px){
     .productShot {
-        display: block;
-        text-align: center;
+        width: 85%;
     }
 
     img {
